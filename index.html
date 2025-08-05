@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Agent - Book Your London Stay</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        #chat-widget {
+            transition: all 0.3s ease-in-out;
+        }
+        .chat-bubble {
+            max-width: 85%;
+        }
+        .error-bubble {
+            background-color: #fee2e2; /* light red */
+            color: #b91c1c; /* dark red */
+            border: 1px solid #fecaca; /* lighter red */
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Header & Navigation Bar -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold text-gray-900">Hotel<span class="text-blue-600">Agent</span></a>
+            <div class="hidden md:flex space-x-6">
+                <a href="#home" class="text-gray-600 hover:text-blue-600">Home</a>
+                <a href="#rooms" class="text-gray-600 hover:text-blue-600">Rooms</a>
+                <a href="#contact" class="text-gray-600 hover:text-blue-600">Contact</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="home" class="relative h-[70vh] md:h-[90vh] bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=2070&auto=format&fit=crop');">
+            <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+            <div class="relative z-10 flex flex-col items-center justify-center h-full text-white text-center px-4">
+                <h1 class="text-4xl md:text-6xl font-extrabold mb-4">Your Perfect London Stay Awaits</h1>
+                <p class="text-lg md:text-xl max-w-3xl mb-8">Click the chat icon in the corner to talk to our intelligent agent and book your ideal hotel.</p>
+            </div>
+        </section>
+
+        <!-- Other sections (Rooms, Amenities, etc.) would go here -->
+        
+    </main>
+
+    <!-- Chat Widget -->
+    <div id="chat-container" class="fixed bottom-5 right-5 z-50">
+        <!-- Chat Button -->
+        <button id="chat-open-button" class="bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.962 8.962 0 01-4.33-1.132l-1.214.81a1 1 0 01-1.32-1.32l.81-1.214A8.962 8.962 0 012 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9a1 1 0 11-2 0 1 1 0 012 0zm5 0a1 1 0 11-2 0 1 1 0 012 0z" clip-rule="evenodd" />
+            </svg>
+        </button>
+
+        <!-- Chat Widget Window -->
+        <div id="chat-widget" class="hidden w-80 md:w-96 h-[60vh] bg-white rounded-lg shadow-xl flex flex-col">
+            <!-- Header -->
+            <div class="bg-blue-600 text-white p-4 flex justify-between items-center rounded-t-lg">
+                <h3 class="font-bold text-lg">Hotel Agent</h3>
+                <button id="chat-close-button" class="text-white hover:text-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <!-- Message Area -->
+            <div id="chat-messages" class="flex-1 p-4 overflow-y-auto bg-gray-50">
+                 <div class="flex justify-start mb-4">
+                    <div class="chat-bubble bg-gray-200 text-gray-800 rounded-lg p-3">
+                        <p>Hello! How can I help you find the perfect hotel in London today?</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Input Area -->
+            <div class="p-4 bg-white border-t border-gray-200 rounded-b-lg">
+                <div id="loader-container" class="hidden items-center mb-2">
+                    <div class="loader"></div>
+                    <p class="ml-3 text-gray-500">Agent is thinking...</p>
+                </div>
+                <form id="chat-form" class="flex items-center space-x-2">
+                    <input type="text" id="chat-input" placeholder="Ask me anything..." class="w-full px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="submit" class="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatOpenButton = document.getElementById('chat-open-button');
+            const chatCloseButton = document.getElementById('chat-close-button');
+            const chatWidget = document.getElementById('chat-widget');
+            const chatForm = document.getElementById('chat-form');
+            const chatInput = document.getElementById('chat-input');
+            const chatMessages = document.getElementById('chat-messages');
+            const loaderContainer = document.getElementById('loader-container');
+            const BACKEND_URL = 'http://127.0.0.1:5000/chat';
+
+            chatOpenButton.addEventListener('click', () => {
+                chatWidget.classList.remove('hidden');
+                chatOpenButton.classList.add('hidden');
+            });
+
+            chatCloseButton.addEventListener('click', () => {
+                chatWidget.classList.add('hidden');
+                chatOpenButton.classList.remove('hidden');
+            });
+
+            chatForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const message = chatInput.value.trim();
+                if (!message) return;
+
+                addMessage(message, 'user');
+                chatInput.value = '';
+                loaderContainer.classList.remove('hidden');
+
+                try {
+                    const response = await fetch(BACKEND_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: message }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    addMessage(data.reply, 'agent');
+
+                } catch (error) {
+                    console.error('Error communicating with agent:', error);
+                    // Provide a more detailed, helpful error message
+                    const errorMessage = `
+                        <p class="font-bold">Connection Error!</p>
+                        <p class="mt-2 text-sm">I couldn't connect to the agent. Please check the following:</p>
+                        <ul class="list-disc list-inside text-sm mt-1">
+                            <li>Is your Python backend server (<b>app.py</b>) running in the terminal?</li>
+                            <li>Are there any errors showing in that terminal window?</li>
+                            <li>Did you forget to add your OpenAI API key?</li>
+                        </ul>
+                    `;
+                    addMessage(errorMessage, 'agent', true); // Pass true for error
+                } finally {
+                    loaderContainer.classList.add('hidden');
+                }
+            });
+
+            function addMessage(text, sender, isError = false) {
+                const messageDiv = document.createElement('div');
+                const bubbleDiv = document.createElement('div');
+                
+                messageDiv.classList.add('flex', 'mb-4');
+                bubbleDiv.classList.add('chat-bubble', 'rounded-lg', 'p-3');
+                
+                if (sender === 'user') {
+                    messageDiv.classList.add('justify-end');
+                    bubbleDiv.classList.add('bg-blue-500', 'text-white');
+                } else {
+                    messageDiv.classList.add('justify-start');
+                    if (isError) {
+                        bubbleDiv.classList.add('error-bubble');
+                    } else {
+                        bubbleDiv.classList.add('bg-gray-200', 'text-gray-800');
+                    }
+                }
+                
+                bubbleDiv.innerHTML = text.replace(/\n/g, '<br>');
+                messageDiv.appendChild(bubbleDiv);
+                chatMessages.appendChild(messageDiv);
+                
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        });
+    </script>
+</body>
+</html>
